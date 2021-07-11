@@ -2,6 +2,7 @@ import pygame
 import player
 from constants import *
 
+
 class Game:
     def __init__(self):
         pygame.init()
@@ -21,8 +22,9 @@ class Game:
 
     def run(self):
         done = False
+        music = pygame.mixer.Sound('assets/mk3.wav')
+        music.play()
         while not done:
-
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
@@ -47,6 +49,7 @@ class Game:
             pygame.display.flip()
             self.clock.tick(FPS)
         pygame.quit()
+
 
 game = Game()
 game.run()
