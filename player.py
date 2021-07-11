@@ -34,30 +34,15 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         self.image = self.standing[self.stand_indx % len(self.standing)]
         self.stand_indx += 1
-        # self.rect.x += self.change_x
-        # if self.direction == "R":
-        #     frame = self.rect.x % len(self.walking_frames_r)
-        #     self.image = self.walking_frames_r[frame]
-        # else:
-        #     frame = self.rect.x % len(self.walking_frames_l)
-        #     self.image = self.walking_frames_l[frame]
+        self.rect.x += self.change_x
 
-    def draw(self, screen):
-        pass
-
-    # Движение, управляемое игроком:
     def go_left(self):
-        """ Вызывается, когда пользователь нажимает стрелку влево. """
         self.change_x = -6
-        self.direction = "L"
 
     def go_right(self):
-        """ Вызывается, когда пользователь нажимает стрелку вправо. """
         self.change_x = 6
-        self.direction = "R"
 
     def stop(self):
-        """Вызывается, когда пользователь отпускает клавиатуру. """
         self.change_x = 0
 
 
@@ -96,28 +81,13 @@ class Enemy(pygame.sprite.Sprite):
     def update(self):
         self.image = self.standing[self.stand_indx % len(self.standing)]
         self.stand_indx += 1
-        # self.rect.x += self.change_x
-        # if self.direction == "R":
-        #     frame = self.rect.x % len(self.walking_frames_r)
-        #     self.image = self.walking_frames_r[frame]
-        # else:
-        #     frame = self.rect.x % len(self.walking_frames_l)
-        #     self.image = self.walking_frames_l[frame]
+        self.rect.x += self.change_x
 
-    def draw(self, screen):
-        pass
-
-    # Движение, управляемое игроком:
     def go_left(self):
-        """ Вызывается, когда пользователь нажимает стрелку влево. """
         self.change_x = -6
-        self.direction = "L"
 
     def go_right(self):
-        """ Вызывается, когда пользователь нажимает стрелку вправо. """
         self.change_x = 6
-        self.direction = "R"
 
     def stop(self):
-        """Вызывается, когда пользователь отпускает клавиатуру. """
         self.change_x = 0

@@ -7,9 +7,9 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
         pygame.display.set_caption('FIGHTER')
-        self.bg = pygame.image.load('assets/background.png')
-        self.player = player.Player(120, 20)
-        self.enemy = player.Enemy(500, 20)
+        self.bg = pygame.image.load('assets/bg3.jpeg')
+        self.player = player.Player(120, 85)
+        self.enemy = player.Enemy(500, 85)
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.add(self.player)
         self.all_sprite_list.add(self.enemy)
@@ -31,12 +31,16 @@ class Game:
                         self.player.go_left()
                     elif event.key == pygame.K_RIGHT:
                         self.player.go_right()
+                    elif event.key == pygame.K_a:
+                        self.enemy.go_left()
+                    elif event.key == pygame.K_d:
+                        self.enemy.go_right()
 
                 elif event.type == pygame.KEYUP:
-                    if event.key == pygame.K_LEFT and self.player.change_x < 0:
+                    if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                         self.player.stop()
-                    if event.key == pygame.K_RIGHT and self.player.change_x > 0:
-                        self.player.stop()
+                    if event.key in [pygame.K_a, pygame.K_d]:
+                        self.enemy.stop()
 
             self.draw()
             self.all_sprite_list.update()
