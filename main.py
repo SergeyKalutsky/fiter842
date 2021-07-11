@@ -9,8 +9,10 @@ class Game:
         pygame.display.set_caption('FIGHTER')
         self.bg = pygame.image.load('assets/background.png')
         self.player = player.Player(120, 20)
+        self.enemy = player.Enemy(500, 20)
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.add(self.player)
+        self.all_sprite_list.add(self.enemy)
         self.clock = pygame.time.Clock()
 
     def draw(self):
