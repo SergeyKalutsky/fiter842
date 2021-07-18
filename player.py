@@ -12,28 +12,46 @@ class Player(pygame.sprite.Sprite):
         ss = SpriteSheet('assets/scorpion_red_sprites.png')
 
         self.standing = []
-        for _ in range(6):
-            self.append_img(ss.get_image(0, 0, 46, 100))
-            self.append_img(ss.get_image(48, 0, 45, 100))
-            self.append_img(ss.get_image(96, 0, 45, 100))
-            self.append_img(ss.get_image(142, 0, 46, 100))
-            self.append_img(ss.get_image(189, 0, 47, 100))
-            self.append_img(ss.get_image(239, 0, 45, 100))
+        self.standing += self.append_img(ss.get_image(0, 0, 46, 100))
+        self.standing += self.append_img(ss.get_image(48, 0, 45, 100))
+        self.standing += self.append_img(ss.get_image(96, 0, 45, 100))
+        self.standing += self.append_img(ss.get_image(142, 0, 46, 100))
+        self.standing += self.append_img(ss.get_image(189, 0, 47, 100))
+        self.standing += self.append_img(ss.get_image(239, 0, 45, 100))
 
+        self.appercot = []
+        self.appercot += self.append_img(ss.get_image(650, 450, 68, 130))
+        self.appercot += self.append_img(ss.get_image(718, 450, 68, 130))
+        self.appercot += self.append_img(ss.get_image(792, 450, 63, 130))
+        self.appercot += self.append_img(ss.get_image(850, 450, 68, 130))
+        self.appercot += self.append_img(ss.get_image(965, 450, 68, 130))
+        self.appercot += self.append_img(ss.get_image(1036, 450, 68, 130))
+
+        self.attack = False
         self.image = self.standing[0]
         self.stand_indx = 1
+        self.appercot_indx = 0
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
 
     def append_img(self, img):
+        lst = []
         img = pygame.transform.scale2x(img)
         for _ in range(3):
-            self.standing.append(img)
+            lst.append(img) 
+        return lst
 
     def update(self):
-        self.image = self.standing[self.stand_indx % len(self.standing)]
-        self.stand_indx += 1
+        if not self.attack:
+            self.image = self.standing[self.stand_indx % len(self.standing)]
+            self.stand_indx += 1
+        else:
+            self.image = self.appercot[self.appercot_indx % len(self.appercot)]
+            self.appercot_indx += 1
+            if self.appercot_indx >= len(self.appercot):
+                self.attack = False
+                self.appercot_indx = 0
         self.rect.x += self.change_x
 
     def go_left(self):
