@@ -1,12 +1,12 @@
 import pygame
 import player
-from constants import *
+from constants import WIDTH, HEIGHT, FPS
 
 
 class Game:
     def __init__(self):
         pygame.init()
-        self.screen = pygame.display.set_mode([SCREEN_WIDTH, SCREEN_HEIGHT])
+        self.screen = pygame.display.set_mode([WIDTH, HEIGHT])
         pygame.display.set_caption('FIGHTER')
         self.bg = pygame.image.load('assets/bg3.png')
         self.player = player.Player(120, 85)

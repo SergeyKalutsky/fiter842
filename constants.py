@@ -3,6 +3,6 @@
 """
 
 # Характеристики приложения
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 300
+WIDTH = 800
+HEIGHT = 300
 FPS = 30
