@@ -1,11 +1,12 @@
 import pygame
 import player
-from constants import WIDTH, HEIGHT, FPS
+from constants import WIDTH, HEIGHT, FPS, RED
 
 
 class Game:
     def __init__(self):
         pygame.init()
+        self.font = pygame.font.SysFont('Arial', 45)
         self.screen = pygame.display.set_mode([WIDTH, HEIGHT])
         pygame.display.set_caption('FIGHTER')
         self.bg = pygame.image.load('assets/bg3.png')
@@ -21,6 +22,11 @@ class Game:
     def draw(self):
         self.screen.blit(self.bg, (0, 0))
         self.all_sprite_list.draw(self.screen)
+        text = self.font.render(str(self.enemy.hp), True, RED)
+        self.screen.blit(text,  (700, 10))
+        text = self.font.render(str(self.player.hp), True, RED)
+        self.screen.blit(text,  (20, 10))
+        
 
     def run(self):
         done = False

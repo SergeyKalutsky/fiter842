@@ -1,3 +1,4 @@
+import json
 import pygame
 from utils import SpriteSheet
 
@@ -9,23 +10,15 @@ class Player(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
+        data = self.read_json()
         ss = SpriteSheet('assets/scorpion_red_sprites.png')
-
         self.standing = []
-        self.standing += self.append_img(ss.get_image(0, 0, 46, 100))
-        self.standing += self.append_img(ss.get_image(48, 0, 45, 100))
-        self.standing += self.append_img(ss.get_image(96, 0, 45, 100))
-        self.standing += self.append_img(ss.get_image(142, 0, 46, 100))
-        self.standing += self.append_img(ss.get_image(189, 0, 47, 100))
-        self.standing += self.append_img(ss.get_image(239, 0, 45, 100))
-
+        for row in data['standing']:
+            self.standing += self.append_img(ss.get_image(*row))
+        
         self.appercot = []
-        self.appercot += self.append_img(ss.get_image(650, 450, 68, 130))
-        self.appercot += self.append_img(ss.get_image(718, 450, 68, 130))
-        self.appercot += self.append_img(ss.get_image(792, 450, 63, 130))
-        self.appercot += self.append_img(ss.get_image(850, 450, 68, 130))
-        self.appercot += self.append_img(ss.get_image(965, 450, 68, 130))
-        self.appercot += self.append_img(ss.get_image(1036, 450, 68, 130))
+        for row in data['appercot']:
+            self.appercot += self.append_img(ss.get_image(*row))
 
         self.attack = False
         self.image = self.standing[0]
@@ -35,6 +28,12 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.enemy = None
+        self.hp = 100
+
+    def read_json(self):
+        with open('player.json', 'r') as f:
+            data = json.load(f)
+        return data
 
     def append_img(self, img):
         lst = []
@@ -77,6 +76,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
+        self.hp = 100
         ss = SpriteSheet('assets/scorpion_sprites.png')
 
         self.standing = []
@@ -94,6 +94,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.hit_cooldown = 0
         self.enemy = None
 
     def append_img(self, img, flip=False):
@@ -109,7 +110,13 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x += self.change_x
         hit_list = pygame.sprite.collide_rect(self, self.enemy)
         if hit_list:
+            if self.enemy.attack and not self.hit_cooldown:
+                self.hit_cooldown = 21
+                self.hp -= 10
             self.stop()
+
+        if self.hit_cooldown:
+            self.hit_cooldown -= 1
 
     def go_left(self):
         self.change_x = -6
