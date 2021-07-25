@@ -34,12 +34,13 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.enemy = None
 
     def append_img(self, img):
         lst = []
         img = pygame.transform.scale2x(img)
         for _ in range(3):
-            lst.append(img) 
+            lst.append(img)
         return lst
 
     def update(self):
@@ -52,7 +53,12 @@ class Player(pygame.sprite.Sprite):
             if self.appercot_indx >= len(self.appercot):
                 self.attack = False
                 self.appercot_indx = 0
+
         self.rect.x += self.change_x
+
+        hit_list = pygame.sprite.collide_rect(self, self.enemy)
+        if hit_list:
+            self.stop()
 
     def go_left(self):
         self.change_x = -6
@@ -88,6 +94,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.enemy = None
 
     def append_img(self, img, flip=False):
         img = pygame.transform.scale2x(img)
@@ -100,6 +107,9 @@ class Enemy(pygame.sprite.Sprite):
         self.image = self.standing[self.stand_indx % len(self.standing)]
         self.stand_indx += 1
         self.rect.x += self.change_x
+        hit_list = pygame.sprite.collide_rect(self, self.enemy)
+        if hit_list:
+            self.stop()
 
     def go_left(self):
         self.change_x = -6

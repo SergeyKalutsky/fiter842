@@ -14,6 +14,8 @@ class Game:
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.add(self.player)
         self.all_sprite_list.add(self.enemy)
+        self.player.enemy = self.enemy
+        self.enemy.enemy = self.player
         self.clock = pygame.time.Clock()
 
     def draw(self):
@@ -28,7 +30,7 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     done = True
-                if event.type == pygame.KEYDOWN:
+                elif  event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT:
                         self.player.go_left()
                     elif event.key == pygame.K_RIGHT:
@@ -40,7 +42,7 @@ class Game:
                     elif event.key == pygame.K_SPACE:
                         self.player.attack = True
 
-                elif event.type == pygame.KEYUP:
+                if event.type == pygame.KEYUP:
                     if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
                         self.player.stop()
                     if event.key in [pygame.K_a, pygame.K_d]:
