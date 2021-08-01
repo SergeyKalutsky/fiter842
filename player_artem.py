@@ -1,7 +1,6 @@
 import json
 import pygame
 from utils import SpriteSheet
-from constants import GREEN, RED, WHITE
 
 
 class Player(pygame.sprite.Sprite):
@@ -16,7 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.standing = []
         for row in data['standing']:
             self.standing += self.append_img(ss.get_image(*row))
-
+        
         self.appercot = []
         for row in data['appercot']:
             self.appercot += self.append_img(ss.get_image(*row))
@@ -29,7 +28,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.enemy = None
-        self.hb = HealthBar(100, 20, 10, 350, 30, 40, 1)
+        self.hp = 100
 
     def read_json(self):
         with open('player.json', 'r') as f:
@@ -59,7 +58,6 @@ class Player(pygame.sprite.Sprite):
         hit_list = pygame.sprite.collide_rect(self, self.enemy)
         if hit_list:
             self.stop()
-        self.hb.update()
 
     def go_left(self):
         self.change_x = -6
@@ -98,7 +96,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.y = y
         self.hit_cooldown = 0
         self.enemy = None
-        self.hb = HealthBar(100, 430, 10, 350, 30, 700, 1)
+        self.hp = 100
 
     def append_img(self, img, flip=False):
         img = pygame.transform.scale2x(img)
@@ -112,15 +110,15 @@ class Enemy(pygame.sprite.Sprite):
         self.stand_indx += 1
         self.rect.x += self.change_x
         hit_list = pygame.sprite.collide_rect(self, self.enemy)
+        global life
         if hit_list:
             if self.enemy.attack and not self.hit_cooldown:
                 self.hit_cooldown = 21
-                self.hb.hp -= 10
+                life -= 35
             self.stop()
 
         if self.hit_cooldown:
             self.hit_cooldown -= 1
-        self.hb.update()
 
     def go_left(self):
         self.change_x = -6
@@ -130,26 +128,3 @@ class Enemy(pygame.sprite.Sprite):
 
     def stop(self):
         self.change_x = 0
-
-
-class HealthBar:
-    def __init__(self, hp, x, y, w, h, text_x, text_y):
-        self.hp = hp
-        self.h = h
-        self.w = w
-        self.x = x
-        self.y = y
-        self.text_x = text_x
-        self.text_y = text_y
-        self.max_w = w
-
-    def update(self):
-        self.w = self.hp*3.5
-
-    def draw(self, screen, font):
-        square_r = pygame.Rect(self.x, self.y, self.max_w, self.h)
-        square_g = pygame.Rect(self.x, self.y, self.w, self.h)
-        pygame.draw.rect(screen, RED, square_r)
-        pygame.draw.rect(screen, GREEN, square_g)
-        text = font.render(str(self.hp), True, WHITE)
-        screen.blit(text,  (self.text_x, self.text_y))
