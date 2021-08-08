@@ -2,6 +2,10 @@ import json
 import pygame
 from utils import SpriteSheet
 from constants import GREEN, RED, WHITE
+import json
+import pygame
+from utils import SpriteSheet
+from constants import GREEN, RED, WHITE
 
 
 class Player(pygame.sprite.Sprite):
@@ -23,6 +27,7 @@ class Player(pygame.sprite.Sprite):
 
         self.attack = False
         self.image = self.standing[0]
+        self.mask = pygame.mask.from_surface(self.image)
         self.stand_indx = 1
         self.appercot_indx = 0
         self.rect = self.image.get_rect()
@@ -56,7 +61,8 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.x += self.change_x
 
-        hit_list = pygame.sprite.collide_rect(self, self.enemy)
+        self.mask = pygame.mask.from_surface(self.image)
+        hit_list = pygame.sprite.collide_mask(self, self.enemy)
         if hit_list:
             self.stop()
         self.hb.update()
@@ -84,10 +90,10 @@ class Enemy(pygame.sprite.Sprite):
 
         self.standing = []
         for row in data['standing']:
-            print(row)
             self.standing += self.append_img(ss.get_image(*row), flip=True)
 
         self.image = self.standing[0]
+        self.mask = pygame.mask.from_surface(self.image)
         self.stand_indx = 1
         self.rect = self.image.get_rect()
         self.rect.x = x
@@ -114,7 +120,8 @@ class Enemy(pygame.sprite.Sprite):
         self.image = self.standing[self.stand_indx % len(self.standing)]
         self.stand_indx += 1
         self.rect.x += self.change_x
-        hit_list = pygame.sprite.collide_rect(self, self.enemy)
+        self.mask = pygame.mask.from_surface(self.image)
+        hit_list = pygame.sprite.collide_mask(self, self.enemy)
         if hit_list:
             if self.enemy.attack and not self.hit_cooldown:
                 self.hit_cooldown = 21
