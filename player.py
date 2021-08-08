@@ -15,7 +15,7 @@ class Player(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
-        data = self.read_json()
+        data = self.read_json('player')
         ss = SpriteSheet('assets/scorpion_red_sprites.png')
         self.standing = []
         for row in data['standing']:
@@ -36,9 +36,10 @@ class Player(pygame.sprite.Sprite):
         self.enemy = None
         self.hb = HealthBar(100, 20, 10, 350, 30, 40, 1)
 
-    def read_json(self):
-        with open('player.json', 'r') as f:
+    def read_json(self, charachter):
+        with open('animation.json', 'r') as f:
             data = json.load(f)
+        data = data[charachter]
         return data
 
     def append_img(self, img):
@@ -84,7 +85,7 @@ class Enemy(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
-        data = self.read_json()
+        data = self.read_json('enemy')
         self.hp = 100
         ss = SpriteSheet('assets/scorpion_sprites.png')
 
@@ -102,9 +103,10 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy = None
         self.hb = HealthBar(100, 430, 10, 350, 30, 700, 1)
 
-    def read_json(self):
-        with open('enemy.json', 'r') as f:
+    def read_json(self, charachter):
+        with open('animation.json', 'r') as f:
             data = json.load(f)
+        data = data[charachter]
         return data
 
     def append_img(self, img, flip=False):
