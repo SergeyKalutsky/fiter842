@@ -78,18 +78,14 @@ class Enemy(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
+        data = self.read_json()
         self.hp = 100
         ss = SpriteSheet('assets/scorpion_sprites.png')
 
         self.standing = []
-        for i in range(6):
-            self.append_img(ss.get_image(73, 0, 48, 100), flip=True)
-            self.append_img(ss.get_image(133, 0, 47, 100), flip=True)
-            self.append_img(ss.get_image(191, 0, 46, 100), flip=True)
-            self.append_img(ss.get_image(250, 0, 47, 100), flip=True)
-            self.append_img(ss.get_image(307, 0, 47, 100), flip=True)
-            self.append_img(ss.get_image(365, 0, 47, 100), flip=True)
-            self.append_img(ss.get_image(424, 0, 49, 100), flip=True)
+        for row in data['standing']:
+            print(row)
+            self.standing += self.append_img(ss.get_image(*row), flip=True)
 
         self.image = self.standing[0]
         self.stand_indx = 1
@@ -100,12 +96,19 @@ class Enemy(pygame.sprite.Sprite):
         self.enemy = None
         self.hb = HealthBar(100, 430, 10, 350, 30, 700, 1)
 
+    def read_json(self):
+        with open('enemy.json', 'r') as f:
+            data = json.load(f)
+        return data
+
     def append_img(self, img, flip=False):
+        lst = []
         img = pygame.transform.scale2x(img)
         if flip:
             img = pygame.transform.flip(img, True, False)
         for _ in range(3):
             self.standing.append(img)
+        return lst
 
     def update(self):
         self.image = self.standing[self.stand_indx % len(self.standing)]
