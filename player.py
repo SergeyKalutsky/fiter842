@@ -154,6 +154,9 @@ class HealthBar:
         self.max_w = w
 
     def update(self):
+        if self.hp < 0:
+            self.hp = 0
+            return
         self.w = self.hp*3.5
 
     def draw(self, screen, font):
