@@ -6,20 +6,26 @@ from constants import GREEN, RED, WHITE
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, entity,
+                 srite_file, hb_x=20, hb_text_x=40, flip=False):
         super().__init__()
 
         self.change_x = 0
         self.change_y = 0
-        data = self.read_json('player')
-        ss = SpriteSheet('assets/scorpion_red_sprites.png')
+        data = self.read_json(entity)
+        ss = SpriteSheet(f'assets/images/{srite_file}.png')
+
         self.standing = []
         for row in data['standing']:
-            self.standing += self.append_img(ss.get_image(*row))
+            self.standing += self.append_img(ss.get_image(*row), flip=flip)
 
         self.appercot = []
         for row in data['appercot']:
-            self.appercot += self.append_img(ss.get_image(*row))
+            self.appercot += self.append_img(ss.get_image(*row), flip=flip)
+
+        self.death = []
+        for row in data['death']:
+            self.death += self.append_img(ss.get_image(*row), flip=flip)
 
         self.attack = False
         self.image = self.standing[0]
@@ -29,8 +35,9 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
+        self.hit_cooldown = 0
         self.enemy = None
-        self.hb = HealthBar(100, 20, 10, 350, 30, 40, 1)
+        self.hb = HealthBar(100, hb_x, 10, 350, 30, hb_text_x, 1)
 
     def read_json(self, charachter):
         with open('animation.json', 'r') as f:
@@ -38,9 +45,11 @@ class Player(pygame.sprite.Sprite):
         data = data[charachter]
         return data
 
-    def append_img(self, img):
+    def append_img(self, img, flip=False):
         lst = []
         img = pygame.transform.scale2x(img)
+        if flip:
+            img = pygame.transform.flip(img, True, False)
         for _ in range(3):
             lst.append(img)
         return lst
@@ -56,67 +65,6 @@ class Player(pygame.sprite.Sprite):
                 self.attack = False
                 self.appercot_indx = 0
 
-        self.rect.x += self.change_x
-
-        self.mask = pygame.mask.from_surface(self.image)
-        hit_list = pygame.sprite.collide_mask(self, self.enemy)
-        if hit_list:
-            self.stop()
-        self.hb.update()
-
-    def go_left(self):
-        self.change_x = -6
-
-    def go_right(self):
-        self.change_x = 6
-
-    def stop(self):
-        self.change_x = 0
-
-
-class Enemy(pygame.sprite.Sprite):
-
-    def __init__(self, x, y):
-        super().__init__()
-
-        self.change_x = 0
-        self.change_y = 0
-        data = self.read_json('enemy')
-        self.hp = 100
-        ss = SpriteSheet('assets/scorpion_sprites.png')
-
-        self.standing = []
-        for row in data['standing']:
-            self.standing += self.append_img(ss.get_image(*row), flip=True)
-
-        self.image = self.standing[0]
-        self.mask = pygame.mask.from_surface(self.image)
-        self.stand_indx = 1
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.hit_cooldown = 0
-        self.enemy = None
-        self.hb = HealthBar(100, 430, 10, 350, 30, 700, 1)
-
-    def read_json(self, charachter):
-        with open('animation.json', 'r') as f:
-            data = json.load(f)
-        data = data[charachter]
-        return data
-
-    def append_img(self, img, flip=False):
-        lst = []
-        img = pygame.transform.scale2x(img)
-        if flip:
-            img = pygame.transform.flip(img, True, False)
-        for _ in range(3):
-            self.standing.append(img)
-        return lst
-
-    def update(self):
-        self.image = self.standing[self.stand_indx % len(self.standing)]
-        self.stand_indx += 1
         self.rect.x += self.change_x
         self.mask = pygame.mask.from_surface(self.image)
         hit_list = pygame.sprite.collide_mask(self, self.enemy)
@@ -164,3 +112,17 @@ class HealthBar:
         pygame.draw.rect(screen, GREEN, square_g)
         text = font.render(str(self.hp), True, WHITE)
         screen.blit(text,  (self.text_x, self.text_y))
+
+
+class Timer:
+    def __init__(self, x, y, indx):
+        self.x = x
+        self.y = y
+        self.indx = indx
+
+    def update(self):
+        self.indx -= 0.3
+
+    def draw(self, screen, font2):
+        text = font2.render(str(round(self.indx/10)), True, RED)
+        screen.blit(text, (self.x, self.y))

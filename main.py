@@ -22,11 +22,12 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('FIGHTER')
         # Players
-        self.player = player.Player(120, 85)
-        self.enemy = player.Enemy(500, 85)
+        self.player = player.Player(120, 85, 'player', 'scorpion_red_sprites', hb_x=20, hb_text_x=40, flip=False)
+        self.enemy = player.Player(500, 85, 'enemy', 'scorpion_sprites', hb_x=430, hb_text_x=700, flip=True)
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.add(self.player)
         self.all_sprite_list.add(self.enemy)
+        self.timer = player.Timer(378, 10, 1200)
         self.player.enemy = self.enemy
         self.enemy.enemy = self.player
 
@@ -35,7 +36,7 @@ class Game:
         self.all_sprite_list.draw(self.screen)
         self.enemy.hb.draw(self.screen, self.font)
         self.player.hb.draw(self.screen, self.font)
-        self.player.timer.draw(self.screen, self.font_timer)
+        self.timer.draw(self.screen, self.font_timer)
 
     def run(self):
         done = False
@@ -55,6 +56,8 @@ class Game:
                         self.enemy.go_right()
                     elif event.key == pygame.K_SPACE:
                         self.player.attack = True
+                    elif event.key == pygame.K_q:
+                        self.enemy.attack = True
 
                 if event.type == pygame.KEYUP:
                     if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
@@ -63,6 +66,7 @@ class Game:
                         self.enemy.stop()
 
             self.draw()
+            self.timer.update()
             self.all_sprite_list.update()
             pygame.display.flip()
             self.clock.tick(FPS)
