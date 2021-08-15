@@ -6,8 +6,8 @@ from constants import GREEN, RED, WHITE
 
 class Player(pygame.sprite.Sprite):
 
-    def __init__(self, x, y, entity,
-                 srite_file, hb_x=20, hb_text_x=40, flip=False):
+    def __init__(self, x, y, entity, 
+                srite_file, hb_x=20, hb_text_x=40, flip=False):
         super().__init__()
 
         self.change_x = 0
@@ -73,7 +73,7 @@ class Player(pygame.sprite.Sprite):
                 self.hit_cooldown = 21
                 self.hb.hp -= 10
             self.stop()
-
+        
         if self.hit_cooldown:
             self.hit_cooldown -= 1
         self.hb.update()
@@ -86,7 +86,6 @@ class Player(pygame.sprite.Sprite):
 
     def stop(self):
         self.change_x = 0
-
 
 class HealthBar:
     def __init__(self, hp, x, y, w, h, text_x, text_y):
