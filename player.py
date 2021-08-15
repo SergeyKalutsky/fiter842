@@ -2,10 +2,6 @@ import json
 import pygame
 from utils import SpriteSheet
 from constants import GREEN, RED, WHITE
-import json
-import pygame
-from utils import SpriteSheet
-from constants import GREEN, RED, WHITE
 
 
 class Player(pygame.sprite.Sprite):

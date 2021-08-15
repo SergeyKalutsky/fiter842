@@ -1,15 +1,27 @@
 import pygame
 import player
-from constants import WIDTH, HEIGHT, FPS
+from constants import WIDTH, HEIGHT, FPS, DARK_RED
 
 
 class Game:
     def __init__(self):
         pygame.init()
+        # Fonts
         self.font = pygame.font.SysFont('Arial', 40)
+        self.font_timer = pygame.font.SysFont("Arial", 25)
+        self.font_go = pygame.font.SysFont("Arial", 75)
+        # Images
+        self.bg = pygame.image.load('assets/images/bg3.png')
+        # Music
+        self.music = pygame.mixer.Sound('assets/sounds/mk3.wav')
+        self.gong = pygame.mixer.Sound('assets/sounds/gong.mp3')
+        self.laugh = pygame.mixer.Sound('assets/sounds/laugh.mp3')
+        self.wd = pygame.mixer.Sound('assets/sounds/wd.mp3')
+        # Init
         self.screen = pygame.display.set_mode([WIDTH, HEIGHT])
+        self.clock = pygame.time.Clock()
         pygame.display.set_caption('FIGHTER')
-        self.bg = pygame.image.load('assets/bg3.png')
+        # Players
         self.player = player.Player(120, 85)
         self.enemy = player.Enemy(500, 85)
         self.all_sprite_list = pygame.sprite.Group()
@@ -17,18 +29,17 @@ class Game:
         self.all_sprite_list.add(self.enemy)
         self.player.enemy = self.enemy
         self.enemy.enemy = self.player
-        self.clock = pygame.time.Clock()
 
     def draw(self):
         self.screen.blit(self.bg, (0, 0))
         self.all_sprite_list.draw(self.screen)
         self.enemy.hb.draw(self.screen, self.font)
         self.player.hb.draw(self.screen, self.font)
+        self.player.timer.draw(self.screen, self.font_timer)
 
     def run(self):
         done = False
-        music = pygame.mixer.Sound('assets/mk3.wav')
-        music.play()
+        self.music.play()
         while not done:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
