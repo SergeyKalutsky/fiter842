@@ -1,13 +1,13 @@
 import pygame
-from constants import BLACK, WHITE, BLUE, GREEN, WIDTH, HEIGHT
+from constants import BLACK, WHITE, DARK_RED, RED, WIDTH, HEIGHT
 
 
 class Button():
     def __init__(
             self, x, y, w, h, name,
             font_color=WHITE,
-            normal_color=BLUE,
-            highlight_color=GREEN,
+            normal_color=DARK_RED,
+            highlight_color=RED,
             active_color=BLACK,
             size=24,
             font='Arial',

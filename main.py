@@ -115,7 +115,8 @@ class Game:
                         self.player.stop()
                     if event.key in [pygame.K_a, pygame.K_d]:
                         self.enemy.stop()
-
+            
+            self.main_menu.update()
             self.state_update()
             self.draw_states()
             self.timer.update()
