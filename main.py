@@ -39,11 +39,9 @@ class Game:
         self.state = "START"
 
     def draw_states(self):
-        # Выполняем заливку фона:
         self.screen.fill(BLACK)
         self.screen.blit(self.background_img, [0, 0])
         if self.state == "START":
-            # Рисуем только главное меню:
             self.main_menu.draw(self.screen)
 
         elif self.state == "GAME":
@@ -54,38 +52,32 @@ class Game:
             self.timer.draw(self.screen, self.font_timer)
 
         elif self.state == "PAUSE":
-            # Рисуем "обстановку" - платформы и главное меню:
             self.platform_list.draw(self.screen)
             self.main_menu.draw(self.screen)
 
         elif self.state == "FINISH":
-            # Рисуем только главное меню:
             self.main_menu.draw(self.screen)
 
     def run(self):
         done = False
         self.music.play()
         while not done:
-            #  Get the reply.
             for event in pygame.event.get():
                 active_button = self.main_menu.handle_mouse_event(event)
                 if event.type == pygame.QUIT:
                     done = True
                 if active_button:
-                    # После того, как на кнопку нажали, возвращаем ее состояние в "normal":
                     active_button.state = 'normal'
 
-                # Нажали на кнопку START, перенесем персонажа в начальное  и начнем игру:
                     if active_button.name == 'START':
                         self.state = 'GAME'
 
-                # На паузе и нажали CONTINUE, переведем игру с состояние GAME:
                     elif active_button.name == 'CONTINUE':
                         self.state = 'GAME'
 
-                # Нажали на QUIT - завешим работу приложения:
                     elif active_button.name == 'QUIT':
                         done = True
+
                 elif event.type == pygame.KEYDOWN:
 
                     if event.key == pygame.K_LEFT:
