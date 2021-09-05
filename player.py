@@ -126,10 +126,13 @@ class Timer:
         self.x = x
         self.y = y
         self.indx = indx
+        self.stop = False
 
     def update(self):
-        self.indx -= 0.3
+        if not self.stop:
+            self.indx -= 0.3
 
     def draw(self, screen, font2):
         text = font2.render(str(round(self.indx/10)), True, RED)
         screen.blit(text, (self.x, self.y))
+

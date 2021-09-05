@@ -1,14 +1,15 @@
 import pygame
 import player
 from menu import MainMenu
-from constants import WIDTH, HEIGHT, FPS, DARK_RED, BLACK
+from constants import WIDTH, HEIGHT, FPS, DARK_RED, BLACK, WHITE
 
 
 class Game:
     def __init__(self):
         pygame.init()
         # Fonts
-        self.font = pygame.font.SysFont('Arial', 40)
+        self.font_bg = pygame.font.SysFont('Arial', 45, bold=True)
+        self.font = pygame.font.SysFont('Arial', 40, bold=True)
         self.font_timer = pygame.font.SysFont("Arial", 25)
         self.font_go = pygame.font.SysFont("Arial", 75)
         # Images
@@ -38,6 +39,14 @@ class Game:
         self.main_menu = MainMenu(300, 200)
         self.state = "START"
 
+    def state_update(self):
+        if (self.player.hb.hp == 0 or self.enemy.hb.hp == 0 or self.timer.indx/10 <= 0) and self.state != 'FINISH':
+            self.state = 'FINISH'
+            self.timer.stop = True
+            self.music.stop()
+            self.gong.play()
+            self.laugh.play(1)
+
     def draw_states(self):
         self.screen.fill(BLACK)
         self.screen.blit(self.background_img, [0, 0])
@@ -56,7 +65,13 @@ class Game:
             self.main_menu.draw(self.screen)
 
         elif self.state == "FINISH":
-            self.main_menu.draw(self.screen)
+            self.screen.blit(self.bg, (0, 0))
+            self.all_sprite_list.draw(self.screen)
+            self.enemy.hb.draw(self.screen, self.font)
+            self.player.hb.draw(self.screen, self.font)
+            self.timer.draw(self.screen, self.font_timer)
+            text = self.font.render('GAME  OVER', True, DARK_RED)
+            self.screen.blit(text, (300, 60))
 
     def run(self):
         done = False
@@ -101,6 +116,7 @@ class Game:
                     if event.key in [pygame.K_a, pygame.K_d]:
                         self.enemy.stop()
 
+            self.state_update()
             self.draw_states()
             self.timer.update()
             self.all_sprite_list.update()
