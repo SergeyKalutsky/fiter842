@@ -1,6 +1,7 @@
 import pygame
 import player
-from constants import WIDTH, HEIGHT, FPS, DARK_RED
+from menu import MainMenu
+from constants import WIDTH, HEIGHT, FPS, DARK_RED, BLACK
 
 
 class Game:
@@ -11,6 +12,7 @@ class Game:
         self.font_timer = pygame.font.SysFont("Arial", 25)
         self.font_go = pygame.font.SysFont("Arial", 75)
         # Images
+        self.background_img = pygame.image.load("assets/images/bg2.png")
         self.bg = pygame.image.load('assets/images/bg3.png')
         # Music
         self.music = pygame.mixer.Sound('assets/sounds/mk3.wav')
@@ -22,8 +24,10 @@ class Game:
         self.clock = pygame.time.Clock()
         pygame.display.set_caption('FIGHTER')
         # Players
-        self.player = player.Player(120, 85, 'player', 'scorpion_red_sprites', hb_x=20, hb_text_x=40, flip=False)
-        self.enemy = player.Player(500, 85, 'enemy', 'scorpion_sprites', hb_x=430, hb_text_x=700, flip=True)
+        self.player = player.Player(
+            120, 85, 'player', 'scorpion_red_sprites', hb_x=20, hb_text_x=40, flip=False)
+        self.enemy = player.Player(
+            500, 85, 'enemy', 'scorpion_sprites', hb_x=430, hb_text_x=700, flip=True)
         self.all_sprite_list = pygame.sprite.Group()
         self.all_sprite_list.add(self.player)
         self.all_sprite_list.add(self.enemy)
@@ -31,32 +35,72 @@ class Game:
         self.player.enemy = self.enemy
         self.enemy.enemy = self.player
 
-    def draw(self):
-        self.screen.blit(self.bg, (0, 0))
-        self.all_sprite_list.draw(self.screen)
-        self.enemy.hb.draw(self.screen, self.font)
-        self.player.hb.draw(self.screen, self.font)
-        self.timer.draw(self.screen, self.font_timer)
+        self.main_menu = MainMenu(300, 200)
+        self.state = "START"
+
+    def draw_states(self):
+        # Выполняем заливку фона:
+        self.screen.fill(BLACK)
+        self.screen.blit(self.background_img, [0, 0])
+        if self.state == "START":
+            # Рисуем только главное меню:
+            self.main_menu.draw(self.screen)
+
+        elif self.state == "GAME":
+            self.screen.blit(self.bg, (0, 0))
+            self.all_sprite_list.draw(self.screen)
+            self.enemy.hb.draw(self.screen, self.font)
+            self.player.hb.draw(self.screen, self.font)
+            self.timer.draw(self.screen, self.font_timer)
+
+        elif self.state == "PAUSE":
+            # Рисуем "обстановку" - платформы и главное меню:
+            self.platform_list.draw(self.screen)
+            self.main_menu.draw(self.screen)
+
+        elif self.state == "FINISH":
+            # Рисуем только главное меню:
+            self.main_menu.draw(self.screen)
 
     def run(self):
         done = False
         self.music.play()
         while not done:
+            #  Get the reply.
             for event in pygame.event.get():
+                active_button = self.main_menu.handle_mouse_event(event)
                 if event.type == pygame.QUIT:
                     done = True
+                if active_button:
+                    # После того, как на кнопку нажали, возвращаем ее состояние в "normal":
+                    active_button.state = 'normal'
+
+                # Нажали на кнопку START, перенесем персонажа в начальное  и начнем игру:
+                    if active_button.name == 'START':
+                        self.state = 'GAME'
+
+                # На паузе и нажали CONTINUE, переведем игру с состояние GAME:
+                    elif active_button.name == 'CONTINUE':
+                        self.state = 'GAME'
+
+                # Нажали на QUIT - завешим работу приложения:
+                    elif active_button.name == 'QUIT':
+                        done = True
                 elif event.type == pygame.KEYDOWN:
+
                     if event.key == pygame.K_LEFT:
                         self.player.go_left()
-                    elif event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_RIGHT:
                         self.player.go_right()
-                    elif event.key == pygame.K_a:
-                        self.enemy.go_left()
-                    elif event.key == pygame.K_d:
-                        self.enemy.go_right()
-                    elif event.key == pygame.K_SPACE:
+                    if event.key == pygame.K_SPACE:
                         self.player.attack = True
-                    elif event.key == pygame.K_q:
+
+                    # 2 Player
+                    if event.key == pygame.K_a:
+                        self.enemy.go_left()
+                    if event.key == pygame.K_d:
+                        self.enemy.go_right()
+                    if event.key == pygame.K_q:
                         self.enemy.attack = True
 
                 if event.type == pygame.KEYUP:
@@ -65,7 +109,7 @@ class Game:
                     if event.key in [pygame.K_a, pygame.K_d]:
                         self.enemy.stop()
 
-            self.draw()
+            self.draw_states()
             self.timer.update()
             self.all_sprite_list.update()
             pygame.display.flip()
