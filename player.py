@@ -1,5 +1,6 @@
 import json
 import pygame
+from random import randint
 from utils import SpriteSheet
 from constants import GREEN, RED, WHITE
 
@@ -15,6 +16,7 @@ class Player(pygame.sprite.Sprite):
 
         self.change_x = 0
         self.change_y = 0
+        self.flip = flip
         data = self.read_json(entity)
         ss = SpriteSheet(f'assets/images/{srite_file}.png')
 
@@ -73,7 +75,12 @@ class Player(pygame.sprite.Sprite):
                 self.appercot_indx = 0
 
         if self.hb.hp > 0:
-            self.rect.x += self.change_x
+            if self.flip:
+                if randint(0, 100) > 95:
+                    self.attack = True
+                self.rect.x += randint(-6, 6)        
+            else:
+                self.rect.x += self.change_x
             self.mask = pygame.mask.from_surface(self.image)
             hit_list = pygame.sprite.collide_mask(self, self.enemy)
             if hit_list:
