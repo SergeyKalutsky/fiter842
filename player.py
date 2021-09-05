@@ -3,6 +3,9 @@ import pygame
 from utils import SpriteSheet
 from constants import GREEN, RED, WHITE
 
+# Анимация
+# Условие конца
+# state отрисовки конца
 
 class Player(pygame.sprite.Sprite):
 
@@ -32,6 +35,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = pygame.mask.from_surface(self.image)
         self.stand_indx = 1
         self.appercot_indx = 0
+        self.death_indx = 0
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -55,7 +59,10 @@ class Player(pygame.sprite.Sprite):
         return lst
 
     def update(self):
-        if not self.attack:
+        if self.hb.hp == 0:
+            self.image = self.death[self.death_indx % len(self.death)]
+            self.death_indx += 1
+        elif not self.attack:
             self.image = self.standing[self.stand_indx % len(self.standing)]
             self.stand_indx += 1
         else:
@@ -65,14 +72,15 @@ class Player(pygame.sprite.Sprite):
                 self.attack = False
                 self.appercot_indx = 0
 
-        self.rect.x += self.change_x
-        self.mask = pygame.mask.from_surface(self.image)
-        hit_list = pygame.sprite.collide_mask(self, self.enemy)
-        if hit_list:
-            if self.enemy.attack and not self.hit_cooldown:
-                self.hit_cooldown = 21
-                self.hb.hp -= 10
-            self.stop()
+        if self.hb.hp > 0:
+            self.rect.x += self.change_x
+            self.mask = pygame.mask.from_surface(self.image)
+            hit_list = pygame.sprite.collide_mask(self, self.enemy)
+            if hit_list:
+                if self.enemy.attack and not self.hit_cooldown:
+                    self.hit_cooldown = 21
+                    self.hb.hp -= 10
+                self.stop()
         
         if self.hit_cooldown:
             self.hit_cooldown -= 1
